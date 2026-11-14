@@ -10,6 +10,8 @@ import { join } from "node:path";
 import Home from "@/app/page";
 import MethodPage from "@/app/method/page";
 import ProductPage from "@/app/product/page";
+import RubricPage from "@/app/rubric/page";
+import StacksPage from "@/app/stacks/page";
 import SamplesPage from "@/app/samples/page";
 import SampleDetailPage from "@/app/samples/[slug]/page";
 import sampleEnvelope from "@/lib/samples/maven-multi-module.json";
@@ -51,6 +53,14 @@ describe("6.5 public claim register", () => {
 
   it("method page", () => {
     assertClean("/method", renderToStaticMarkup(MethodPage()));
+  });
+
+  it("rubric index", () => {
+    assertClean("/rubric", renderToStaticMarkup(RubricPage()));
+  });
+
+  it("stack coverage", () => {
+    assertClean("/stacks", renderToStaticMarkup(StacksPage()));
   });
 
   it("sample gallery", () => {

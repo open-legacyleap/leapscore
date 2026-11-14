@@ -26,8 +26,8 @@ apps/scanner/          PRODUCE side — the engine, colocated with its two entry
   LICENSE                byte-copy of the root Apache-2.0 text (check:package-publish)
 apps/surface/          sealed envelope → GitHub issues (separate process, separate token)
 apps/site/             PRESENT side — Next.js static export on GitHub Pages: marketing,
-                       `/samples` gallery + detail, `/rubric` browser, `/method`;
-                       no server and no scan runtime
+                       `/samples` gallery + detail, `/stacks` coverage, `/rubric` browser,
+                       `/method`; no server and no scan runtime
 action/                checkout-first GitHub Action: src, scripts, and the committed dist
                        (metadata lives at the repository root, `action.yml`)
 action.yml             the single Action metadata file (`uses: <owner>/<repo>@<ref>`,

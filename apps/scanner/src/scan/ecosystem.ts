@@ -13,7 +13,7 @@ import { join } from 'node:path';
 
 export type Manifest = { root: string; ecosystem: string; lockfile: string; manifest: string };
 
-const PATTERNS: Array<{ manifest: string; lockfile: string; ecosystem: string }> = [
+export const PATTERNS: Array<{ manifest: string; lockfile: string; ecosystem: string }> = [
   { manifest: 'package.json', lockfile: 'package-lock.json', ecosystem: 'js' },
   { manifest: 'package.json', lockfile: 'pnpm-lock.yaml', ecosystem: 'js' },
   { manifest: 'package.json', lockfile: 'yarn.lock', ecosystem: 'js' },

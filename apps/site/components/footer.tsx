@@ -21,6 +21,12 @@ export function Footer() {
             Samples
           </Link>
           <Link
+            href="/stacks"
+            className="transition-colors hover:text-foreground"
+          >
+            Stacks
+          </Link>
+          <Link
             href="/method"
             className="transition-colors hover:text-foreground"
           >

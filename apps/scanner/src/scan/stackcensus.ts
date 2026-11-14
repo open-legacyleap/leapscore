@@ -30,8 +30,8 @@ export type StackCensus = {
 
 const MAX_EVIDENCE_PATHS = 20;
 
-const VB6_EXTS = new Set(['.vbp', '.frm', '.bas', '.cls', '.ctl']);
-const DELPHI_EXTS = new Set(['.dpr', '.pas', '.dfm', '.dproj', '.dof']);
+export const VB6_EXTS = new Set(['.vbp', '.frm', '.bas', '.cls', '.ctl']);
+export const DELPHI_EXTS = new Set(['.dpr', '.pas', '.dfm', '.dproj', '.dof']);
 const VB6_PROJECT = /\.vbp$/i;
 const DELPHI_PROJECT = /\.(dpr|dproj|dof)$/i;
 

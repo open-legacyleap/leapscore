@@ -28,6 +28,7 @@
     "check:package-publish": "tsx tooling/checks/package-publish.ts",
     "check:detector-isolation": "tsx tooling/checks/detector-isolation.ts",
     "check:site-boundary": "tsx tooling/checks/site-boundary.ts",
+    "check:stack-coverage": "tsx tooling/checks/stack-coverage.ts",
     "check:surface-boundary": "tsx tooling/checks/surface-boundary.ts",
     "compile:rubric": "tsx tooling/scripts/compile-rubric.ts",
     "check:dist": "tsx tooling/checks/dist-freshness.ts",

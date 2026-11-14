@@ -28,11 +28,11 @@ describe("funnel-landing chrome tells the current truth", () => {
     expect(html).not.toContain("../rubric");
   });
 
-  it("header carries exactly the samples, method, and rubric links", () => {
+  it("header carries exactly the samples, stacks, method, and rubric links", () => {
     const html = renderToStaticMarkup(<SiteHeader />);
     const nav = html.match(/<nav[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? "";
     const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
-    expect(hrefs).toEqual(["/samples", "/method", "/rubric"]);
+    expect(hrefs).toEqual(["/samples", "/stacks", "/method", "/rubric"]);
     expect(html).not.toContain('href="/live');
     expect(html).not.toContain('href="/reports');
     expect(html).not.toMatch(/engine:\s*coming/i);
@@ -75,11 +75,11 @@ describe("public source is reachable from the site", () => {
   const occurrences = (html: string) =>
     [...html.matchAll(new RegExp(`href="${SOURCE_URL}"`, "g"))].length;
 
-  it("header keeps exactly three nav links and adds no repository link", () => {
+  it("header keeps exactly four nav links and adds no repository link", () => {
     const html = renderToStaticMarkup(<SiteHeader />);
     const nav = html.match(/<nav[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? "";
     const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
-    expect(hrefs).toEqual(["/samples", "/method", "/rubric"]);
+    expect(hrefs).toEqual(["/samples", "/stacks", "/method", "/rubric"]);
     expect(html).not.toContain(SOURCE_URL);
   });
 

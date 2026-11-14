@@ -93,6 +93,28 @@ export default function RubricPage() {
         </p>
       </section>
 
+      <section
+        className="instrument-panel mt-6 rounded-lg p-4"
+        aria-labelledby="stacks-handoff-heading"
+      >
+        <h2 id="stacks-handoff-heading" className="text-sm font-medium text-ink">
+          The rubric is stack-agnostic
+        </h2>
+        <p className="mt-2 text-xs leading-relaxed text-muted">
+          All {rows} indicators are defined over the artifacts a scan can read
+          — source files, manifests, dependency graphs, history, and CI —
+          rather than over a named language or framework. What a given stack
+          actually exposes, and where grading stops, is on{" "}
+          <Link
+            href="/stacks"
+            className="underline underline-offset-2 hover:text-foreground"
+          >
+            stack coverage
+          </Link>
+          .
+        </p>
+      </section>
+
       <section className="mt-8" aria-labelledby="categories-heading">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="categories-heading" className="text-lg font-semibold">
