@@ -77,6 +77,25 @@ The site SHALL serve one document per indicator in the compiled registry at a st
 - **WHEN** an indicator document renders
 - **THEN** it links to the previous and next indicator in its category and to its category index
 
+### Requirement: The rubric namespace carries one non-category coverage sub-route
+
+The rubric namespace SHALL expose exactly one document under `/rubric` that is neither a category index nor an indicator document: the stack-coverage document at `/rubric/stacks`. That path SHALL be a static document, SHALL NOT be consumed as a category or indicator identifier, and SHALL NOT change the set of category or indicator documents the artifact exports.
+
+#### Scenario: The sub-route is its own document
+
+- **WHEN** the artifact is built
+- **THEN** `/rubric/stacks` resolves to the stack-coverage document rather than a category page, an indicator page, or the not-found document
+
+#### Scenario: Category and indicator documents are unchanged
+
+- **WHEN** the artifact is built
+- **THEN** the exported category documents are exactly the ten categories, and the indicator documents are exactly the rows of the compiled registry
+
+#### Scenario: Index and sub-route link each other
+
+- **WHEN** the rubric index or the stack-coverage document renders
+- **THEN** each links the other, and both links resolve under the configured base path
+
 ### Requirement: The rubric surface discloses coverage honestly
 
 The rubric surface SHALL state, in the vocabulary the report uses, how many indicators are `measured`, `estimated`, `unknown`, and `not implemented`, and SHALL give the current detector count with its version and 102-row denominator. It SHALL NOT present an indicator as graded when the release has no detector for it.

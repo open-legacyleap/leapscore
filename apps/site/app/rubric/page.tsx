@@ -8,7 +8,11 @@ import {
   defaultStatusCounts,
   releaseStatusCounts,
 } from "@/lib/rubric-index";
-import { categoryHref } from "@/lib/rubric-links";
+import { categoryHref, stackCoverageHref } from "@/lib/rubric-links";
+import {
+  provenanceSentence,
+  stackCoverageSummary,
+} from "@/lib/stack-coverage";
 import { RubricSearch } from "./rubric-search";
 
 export const metadata: Metadata = {
@@ -27,6 +31,7 @@ export default function RubricPage() {
   const release = releaseStatusCounts();
   const declared = defaultStatusCounts();
   const claim = coverageClaim();
+  const stacks = stackCoverageSummary();
   const rows = categories.reduce((sum, category) => sum + category.count, 0);
 
   return (
@@ -95,23 +100,68 @@ export default function RubricPage() {
 
       <section
         className="instrument-panel mt-6 rounded-lg p-4"
-        aria-labelledby="stacks-handoff-heading"
+        aria-labelledby="stack-coverage-heading"
       >
-        <h2 id="stacks-handoff-heading" className="text-sm font-medium text-ink">
-          The rubric is stack-agnostic
-        </h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2
+            id="stack-coverage-heading"
+            className="text-sm font-medium text-ink"
+          >
+            Coverage by stack
+          </h2>
+          <span className="font-mono text-xs text-faint">
+            {stacks.stacks.total} recognised stacks
+          </span>
+        </div>
         <p className="mt-2 text-xs leading-relaxed text-muted">
-          All {rows} indicators are defined over the artifacts a scan can read
-          — source files, manifests, dependency graphs, history, and CI —
-          rather than over a named language or framework. What a given stack
-          actually exposes, and where grading stops, is on{" "}
+          The rubric is stack-agnostic: all {rows} indicators are defined over
+          the artifacts a scan can read — source files, manifests, dependency
+          graphs, history, and CI — rather than over a named language or
+          framework. What a given stack exposes is published per stack.
+        </p>
+        <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {(
+            [
+              ["package", "Package stacks", stacks.stacks.package],
+              ["census", "Census-only", stacks.stacks.census],
+              [
+                "advisory",
+                "Advisory coverage",
+                `${stacks.advisory.covered}/${stacks.advisory.total}`,
+              ],
+              [
+                "frameworks",
+                "Frameworks judged",
+                `${stacks.frameworks.judged}/${stacks.frameworks.total}`,
+              ],
+            ] as const
+          ).map(([key, label, value]) => (
+            <div
+              key={key}
+              data-summary={key}
+              className="rounded border border-hairline bg-panel-raised/60 px-3 py-2"
+            >
+              <dt className="text-[11px] tracking-wider text-faint uppercase">
+                {label}
+              </dt>
+              <dd className="mt-0.5 font-mono text-xl text-foreground tabular-nums">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-3 text-xs leading-relaxed text-faint">
+          {provenanceSentence()}
+        </p>
+        <p className="mt-1 text-xs leading-relaxed text-faint">
           <Link
-            href="/stacks"
+            href={stackCoverageHref()}
             className="underline underline-offset-2 hover:text-foreground"
           >
-            stack coverage
-          </Link>
-          .
+            Stack coverage
+          </Link>{" "}
+          carries the full matrix: recognition, dependency parsing, offline
+          evidence, and where grading stops.
         </p>
       </section>
 

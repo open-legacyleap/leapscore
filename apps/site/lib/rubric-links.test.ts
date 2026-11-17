@@ -3,7 +3,12 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { CATEGORY_ORDER, INDICATOR_REGISTRY } from "./generated/rubric";
-import { categoryHref, categoryPrefix, indicatorHref } from "./rubric-links";
+import {
+  categoryHref,
+  categoryPrefix,
+  indicatorHref,
+  stackCoverageHref,
+} from "./rubric-links";
 
 describe("rubric links (design D8)", () => {
   it("derives the padded category prefix from CATEGORY_ORDER", () => {
@@ -37,6 +42,10 @@ describe("rubric links (design D8)", () => {
       "/rubric/09",
       "/rubric/10",
     ]);
+  });
+
+  it("owns the stack-coverage sub-route path", () => {
+    expect(stackCoverageHref()).toBe("/rubric/stacks");
   });
 
   it("no served component types a /rubric/... path", () => {

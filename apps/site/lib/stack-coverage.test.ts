@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { createElement } from "react";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import StacksPage from "@/app/stacks/page";
+import { StackCoverage } from "@/components/stack-coverage";
 import { STACK_MANIFEST } from "@/lib/generated/stacks";
 import { PATTERNS } from "../../scanner/src/scan/ecosystem";
 import { FRAMEWORK_SIGNATURES } from "../../scanner/src/scan/identity";
@@ -13,8 +14,12 @@ import {
   censusDisclosure,
   detectorCoverage,
   frameworkSplit,
+  stackCoverageSummary,
 } from "@/lib/stack-coverage";
-import { buildStackManifest } from "../scripts/build-stack-manifest";
+import {
+  buildStackManifest,
+  buildStackManifestData,
+} from "../scripts/build-stack-manifest";
 
 const SITE = process.cwd();
 const SCANNER = join(SITE, "..", "scanner");
@@ -104,6 +109,30 @@ describe("stack coverage manifest", () => {
     }
   });
 
+  it("summarises the manifest for the rubric index", () => {
+    const fresh = buildStackManifestData();
+    const packages = fresh.stacks.filter((stack) => stack.kind === "package");
+    const summary = stackCoverageSummary();
+
+    expect(summary.stacks.total).toBe(fresh.stacks.length);
+    expect(summary.stacks.package).toBe(packages.length);
+    expect(summary.stacks.census).toBe(
+      fresh.stacks.filter((stack) => stack.kind === "census").length,
+    );
+    expect(summary.advisory.covered).toBe(
+      packages.filter((stack) => stack.offline_evidence.advisory_covered)
+        .length,
+    );
+    expect(summary.advisory.total).toBe(packages.length);
+    expect(summary.frameworks.total).toBe(fresh.frameworks.length);
+    expect(summary.frameworks.judged).toBe(
+      fresh.frameworks.filter((framework) => framework.judged).length,
+    );
+    expect(summary.frameworks.namedOnly).toBe(
+      fresh.frameworks.filter((framework) => !framework.judged).length,
+    );
+  });
+
   it("splits the identity frameworks against the dataset keys", () => {
     const eol = readJson<EolDoc>(
       join(SCANNER, "src", "scan", "snapshots", "eol.json"),
@@ -123,8 +152,8 @@ describe("stack coverage manifest", () => {
   });
 });
 
-describe("stack coverage page", () => {
-  const html = renderToStaticMarkup(StacksPage());
+describe("stack coverage component", () => {
+  const html = renderToStaticMarkup(createElement(StackCoverage));
 
   it("renders every manifest stack exactly once", () => {
     for (const stack of STACK_MANIFEST.stacks) {
@@ -169,9 +198,9 @@ describe("stack coverage page", () => {
     );
   });
 
-  it("does not type a stack count into the page source", () => {
+  it("does not type a stack count into the surface source", () => {
     const source = readFileSync(
-      join(SITE, "app", "stacks", "page.tsx"),
+      join(SITE, "components", "stack-coverage.tsx"),
       "utf-8",
     );
     expect(source).not.toMatch(/\b31 of 102\b/);

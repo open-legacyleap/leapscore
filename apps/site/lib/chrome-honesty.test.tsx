@@ -9,6 +9,19 @@ import { Footer } from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { SOURCE_URL } from "@/lib/source-links";
 
+function navContent(html: string, label: string): string {
+  const pattern = new RegExp(
+    `<nav[^>]*aria-label="${label}"[^>]*>([\\s\\S]*?)</nav>`,
+  );
+  return html.match(pattern)?.[1] ?? "";
+}
+
+function navHrefs(html: string, label: string): string[] {
+  return [...navContent(html, label).matchAll(/href="([^"]+)"/g)].map(
+    (match) => match[1],
+  );
+}
+
 describe("funnel-landing chrome tells the current truth", () => {
   it("footer links the site rubric route and drops the unshipped-engine disclaimer", () => {
     const html = renderToStaticMarkup(<Footer />);
@@ -28,14 +41,32 @@ describe("funnel-landing chrome tells the current truth", () => {
     expect(html).not.toContain("../rubric");
   });
 
-  it("header carries exactly the samples, stacks, method, and rubric links", () => {
+  it("header carries the reading links before the utilities", () => {
     const html = renderToStaticMarkup(<SiteHeader />);
-    const nav = html.match(/<nav[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? "";
-    const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
-    expect(hrefs).toEqual(["/samples", "/stacks", "/method", "/rubric"]);
+    const navOrder = [...html.matchAll(/<nav[^>]*aria-label="([^"]+)"/g)].map(
+      (match) => match[1],
+    );
+    expect(navOrder).toEqual(["Primary", "Utilities"]);
+    expect(navHrefs(html, "Primary")).toEqual([
+      "/samples",
+      "/method",
+      "/rubric",
+    ]);
+    expect(navHrefs(html, "Utilities")).toEqual([SOURCE_URL, "/assessment"]);
     expect(html).not.toContain('href="/live');
     expect(html).not.toContain('href="/reports');
     expect(html).not.toMatch(/engine:\s*coming/i);
+  });
+
+  it("header and footer carry no stacks entry", () => {
+    const header = renderToStaticMarkup(<SiteHeader />);
+    const footer = renderToStaticMarkup(<Footer />);
+    for (const html of [header, footer]) {
+      expect(html).not.toMatch(/>Stacks</);
+      expect(html).not.toContain('href="/stacks');
+    }
+    expect(header).not.toContain('href="/stacks"');
+    expect(footer).not.toContain('href="/stacks"');
   });
 
   it("method page names only the local and CI scan paths", () => {
@@ -75,12 +106,18 @@ describe("public source is reachable from the site", () => {
   const occurrences = (html: string) =>
     [...html.matchAll(new RegExp(`href="${SOURCE_URL}"`, "g"))].length;
 
-  it("header keeps exactly four nav links and adds no repository link", () => {
+  it("header links the repository once and the assessment route once", () => {
     const html = renderToStaticMarkup(<SiteHeader />);
-    const nav = html.match(/<nav[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? "";
-    const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
-    expect(hrefs).toEqual(["/samples", "/stacks", "/method", "/rubric"]);
-    expect(html).not.toContain(SOURCE_URL);
+    expect(occurrences(html)).toBe(1);
+    const repository = html.match(
+      new RegExp(`<a[^>]*href="${SOURCE_URL}"[^>]*>([^<]*)</a>`),
+    );
+    expect(repository?.[1]).toBe("GitHub");
+    const assessment = [
+      ...html.matchAll(/href="([^"]*\/assessment[^"]*)"/g),
+    ].map((match) => match[1]);
+    expect(assessment).toEqual(["/assessment"]);
+    expect(html).not.toMatch(/href="[^"]*\/assessment\?/);
   });
 
   it("footer links the repository URL exactly, labelled as the source", () => {

@@ -22,6 +22,11 @@ export function categoryHref(code: string): string {
   return `/rubric/${categoryPrefix(code)}`;
 }
 
+/** The stack-coverage document path, the one non-category rubric sub-route. */
+export function stackCoverageHref(): string {
+  return "/rubric/stacks";
+}
+
 /** The indicator document path, e.g. `/rubric/02/ARCH-02`. */
 export function indicatorHref(id: string): string {
   const code = id.split("-")[0] ?? "";

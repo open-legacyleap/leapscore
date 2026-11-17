@@ -6,6 +6,7 @@ import CategoryPage from "@/app/rubric/[categoryId]/page";
 import IndicatorPage, {
   generateStaticParams as indicatorStaticParams,
 } from "@/app/rubric/[categoryId]/[indicatorId]/page";
+import StackCoveragePage from "@/app/rubric/stacks/page";
 import SampleDetailPage from "@/app/samples/[slug]/page";
 import {
   RUBRIC_INDEX,
@@ -14,7 +15,11 @@ import {
   registryEntries,
   releaseStatusCounts,
 } from "@/lib/rubric-index";
-import { indicatorHref } from "@/lib/rubric-links";
+import { indicatorHref, stackCoverageHref } from "@/lib/rubric-links";
+import {
+  provenanceSentence,
+  stackCoverageSummary,
+} from "@/lib/stack-coverage";
 import { INDICATOR_REGISTRY } from "@/lib/generated/rubric";
 import { SAMPLE_ROW_INDEX } from "@/lib/generated/samples";
 import envelope from "@/lib/samples/maven-multi-module.json";
@@ -84,6 +89,23 @@ describe("rubric index (spec: rubric-browser)", () => {
     }
   });
 
+  it("summarises stack coverage from the manifest and links the sub-route", () => {
+    const summary = stackCoverageSummary();
+    expect(html).toContain('data-summary="package"');
+    expect(html).toContain('data-summary="census"');
+    expect(html).toContain('data-summary="advisory"');
+    expect(html).toContain('data-summary="frameworks"');
+    expect(readable).toContain(`${summary.stacks.total} recognised stacks`);
+    expect(html).toContain(`${summary.advisory.covered}/${summary.advisory.total}`);
+    expect(html).toContain(
+      `${summary.frameworks.judged}/${summary.frameworks.total}`,
+    );
+    expect(readable).toContain(provenanceSentence());
+    expect(html).toContain(`href="${stackCoverageHref()}"`);
+    expect(html).not.toContain("data-stack=");
+    expect(html).not.toContain("data-framework=");
+  });
+
   it("the client payload carries classification only, no prose", () => {
     for (const entry of RUBRIC_INDEX) {
       expect(Object.keys(entry).sort()).toEqual([
@@ -128,6 +150,25 @@ describe("rubric category page (spec: no interaction required)", () => {
 
   it("an unknown category is not a page", async () => {
     await expect(categoryPage("99")).rejects.toThrow();
+  });
+});
+
+describe("rubric stack coverage sub-route (spec: rubric-browser)", () => {
+  const html = renderToStaticMarkup(<StackCoveragePage />);
+
+  it("renders the matrix directly with a breadcrumb back to the rubric", () => {
+    expect(html).toContain("What the scanner sees");
+    expect(html).toContain('aria-label="Breadcrumb"');
+    expect(html).toContain('href="/rubric"');
+  });
+
+  it("emits one data-stack row per manifest stack", () => {
+    const rows = html.match(/data-stack="/g) ?? [];
+    expect(rows).toHaveLength(stackCoverageSummary().stacks.total);
+  });
+
+  it("is not treated as a category page", async () => {
+    await expect(categoryPage("stacks")).rejects.toThrow();
   });
 });
 

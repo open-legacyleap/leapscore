@@ -1,7 +1,7 @@
 # Stack coverage
 
 This document defines what "covered" means for a stack. It owns the vocabulary
-and the rules; the site's `/stacks` surface owns the numbers. Every count,
+and the rules; the site's `/rubric/stacks` surface owns the numbers. Every count,
 dataset identifier, and framework split on that surface is generated from
 [`apps/site/lib/generated/stacks.ts`](../apps/site/lib/generated/stacks.ts) by
 [`build-stack-manifest.ts`](../apps/site/scripts/build-stack-manifest.ts), not
@@ -31,7 +31,7 @@ VB6 and Delphi have no package manager. They are recognised as stacks from
 project and source files, and the census is a separate signal that is never
 reported as a dependency manifest. Their dependency indicators are
 **not applicable**, not clean: there is no lockfile or package graph to parse.
-The `/stacks` surface marks these rows as census-only and states the absence
+The `/rubric/stacks` surface marks these rows as census-only and states the absence
 explicitly.
 
 ## The provenance rule

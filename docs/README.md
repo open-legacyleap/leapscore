@@ -26,7 +26,7 @@ Use this page to find the right source. Documentation is split by authority: Ope
 
 - [`rubric/`](./rubric/): the rubric in three layers — the measured set under `indicators/`, the composing rules under `model/`, and the generated instrument under `sheets/`.
 - [`sample-report/`](./sample-report/): guide and scripts for illustrative report assets.
-- [`stack-coverage.md`](./stack-coverage.md): the capability layers behind "covered", the census-only rule, the provenance rule, and every published stack identifier — counts live on the site's `/stacks` surface.
+- [`stack-coverage.md`](./stack-coverage.md): the capability layers behind "covered", the census-only rule, the provenance rule, and every published stack identifier — counts live on the site's `/rubric/stacks` surface.
 - [`diagrams/`](./diagrams/README.md): nine architecture diagrams as matched `.html`/`.json` pairs — illustrative only; revision-pinned snapshots, not a requirements source.
 - [`roadmap/`](./roadmap/): planning material — status, baseline, and ordered backlog; not a requirements source.
   - [`structural-legacy-coverage.md`](./roadmap/structural-legacy-coverage.md): structural signal coverage across the legacy stacks.

@@ -1,10 +1,11 @@
 /**
  * Derived sentences over the generated stack manifest (design D4).
  *
- * Every count and split on `/stacks` comes from here or from the manifest
- * directly; the page never types a stack count, a dataset identifier, or an
- * advisory coverage number. Keeping the derivations in one module lets the
- * guard suite assert the same numbers the page renders.
+ * Every count and split on `/rubric/stacks` and in the rubric index summary
+ * comes from here or from the manifest directly; neither surface types a stack
+ * count, a dataset identifier, or an advisory coverage number. Keeping the
+ * derivations in one module lets the guard suite assert the same numbers the
+ * surfaces render.
  */
 import {
   STACK_MANIFEST,
@@ -105,6 +106,39 @@ export function censusDisclosure(manifest: StackManifest = STACK_MANIFEST): {
             .join(
               " and ",
             )} are recognised from project and source files only. They have no dependency surface: dependency indicators are not applicable, not clean.`,
+  };
+}
+
+export type StackCoverageSummary = {
+  /** Every stack the manifest publishes, split by dependency surface. */
+  stacks: { total: number; package: number; census: number };
+  /** Advisory coverage over the package ecosystems. */
+  advisory: { covered: number; total: number };
+  /** Identity frameworks split by whether the EOL dataset judges them. */
+  frameworks: { total: number; judged: number; namedOnly: number };
+};
+
+/**
+ * The headline values the rubric index states, all derived from the manifest
+ * (design D3). The index renders these numbers and nothing it typed itself.
+ */
+export function stackCoverageSummary(
+  manifest: StackManifest = STACK_MANIFEST,
+): StackCoverageSummary {
+  const advisory = advisoryCoverage(manifest);
+  const frameworks = frameworkSplit(manifest);
+  return {
+    stacks: {
+      total: manifest.stacks.length,
+      package: packageStacks(manifest).length,
+      census: censusStacks(manifest).length,
+    },
+    advisory: { covered: advisory.covered, total: advisory.total },
+    frameworks: {
+      total: frameworks.judged.length + frameworks.namedOnly.length,
+      judged: frameworks.judged.length,
+      namedOnly: frameworks.namedOnly.length,
+    },
   };
 }
 

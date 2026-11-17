@@ -18,6 +18,7 @@ vi.mock("next/navigation", () => ({
 import { ASSESSMENT_BASE_URL, ASSESSMENT_VERDICT } from "@leapscore/contracts";
 import { BookingPanel, UrlBooking } from "@/app/assessment/booking";
 import {
+  ASSESSMENT_ROUTE,
   assessmentAttribution,
   assessmentBookingHref,
   assessmentMailto,
@@ -31,6 +32,17 @@ describe("5.1 the assessment destination is single-sourced", () => {
   it("keeps the placeholder base URL at the site's /assessment route", () => {
     expect(ASSESSMENT_BASE_URL).toBe("https://leapscore.dev/assessment");
     expect(new URL(ASSESSMENT_BASE_URL).pathname).toBe("/assessment");
+  });
+
+  it("exports the site route that serves the assessment document", () => {
+    expect(ASSESSMENT_ROUTE).toBe("/assessment");
+    expect(ASSESSMENT_ROUTE).toBe(new URL(ASSESSMENT_BASE_URL).pathname);
+    expect(ASSESSMENT_ROUTE).not.toContain("?");
+    expect(
+      existsSync(
+        join(process.cwd(), "app", ...ASSESSMENT_ROUTE.split("/").filter(Boolean), "page.tsx"),
+      ),
+    ).toBe(true);
   });
 
   it("ships a served page at that path", () => {

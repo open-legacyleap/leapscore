@@ -78,22 +78,46 @@ The surface SHALL state the detector denominator for the current release and SHA
 
 #### Scenario: The page passes the public claim vocabulary
 
-- **WHEN** the stack surface and the rubric handoff section are rendered and scanned against the repository's prohibited-claim vocabulary
+- **WHEN** the stack surface and the rubric index's stack-coverage summary are rendered and scanned against the repository's prohibited-claim vocabulary
 - **THEN** neither publishes a banned phrase, a future-support promise, or an unqualified full-coverage claim
 
-### Requirement: The rubric index hands off instead of duplicating
+### Requirement: The matrix is served once, under the rubric
 
-The rubric index SHALL carry a section that explains why the rubric is deliberately stack-agnostic and links to the stack surface. It SHALL NOT render its own copy of the capability matrix.
+The site SHALL serve the capability matrix at exactly one document, `/rubric/stacks`, and SHALL NOT export a stack-coverage document at `/stacks`. A request for `/stacks` SHALL resolve through the site's not-found document; no forwarding document SHALL be exported for that path. The matrix document SHALL carry a breadcrumb back to the rubric index.
 
-#### Scenario: The handoff section exists
+#### Scenario: The matrix has one home
+
+- **WHEN** the static artifact is built
+- **THEN** the matrix renders in the `/rubric/stacks` document and in no other exported document
+
+#### Scenario: The retired path is not served
+
+- **WHEN** a visitor requests `/stacks`
+- **THEN** the site's not-found document renders, and no forwarding document is exported for that path
+
+#### Scenario: The sub-route links back to the rubric
+
+- **WHEN** the matrix document renders
+- **THEN** a breadcrumb links the rubric index under the configured base path
+
+### Requirement: The rubric index summarises stack coverage
+
+The rubric index SHALL carry a stack-coverage section that states why the rubric is deliberately stack-agnostic, summarises the published stacks from the generated manifest, and links the matrix document. Every number in the summary SHALL be computed from the generated stack manifest at render time, and the summary SHALL carry the manifest's engine-and-dataset provenance sentence. The section SHALL NOT render the capability matrix, the framework split, or any recognised-stack row of its own.
+
+#### Scenario: The summary matches the manifest
 
 - **WHEN** the rubric index renders
-- **THEN** it contains a section naming the stack-agnostic indicators, a link to the stack surface, and no matrix table of its own
+- **THEN** its stack counts equal the values derived from the generated stack manifest, and its provenance sentence names the engine version and both dataset identifiers
 
-#### Scenario: The link resolves in the exported artifact
+#### Scenario: The summary links the matrix
 
 - **WHEN** the static export is built
-- **THEN** the handoff link targets an exported document and respects the site's configured base path
+- **THEN** the summary's link targets the exported `/rubric/stacks` document and respects the configured base path
+
+#### Scenario: No second matrix
+
+- **WHEN** the rubric index renders
+- **THEN** no recognised-stack row and no framework row appear on the index
 
 ### Requirement: The authored document and the manifest agree
 

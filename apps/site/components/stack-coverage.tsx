@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { STACK_MANIFEST, type StackRow } from "@/lib/generated/stacks";
@@ -9,12 +8,6 @@ import {
   frameworkSplit,
   provenanceSentence,
 } from "@/lib/stack-coverage";
-
-export const metadata: Metadata = {
-  title: "Stacks | LeapScore",
-  description:
-    "Every stack the scanner recognises, whether its dependencies are parsed, which offline evidence covers it, and exactly where grading stops.",
-};
 
 function ShapeList({ values }: { values: readonly string[] }) {
   if (values.length === 0) return null;
@@ -146,7 +139,14 @@ function GradingCell({ stack }: { stack: StackRow }) {
   );
 }
 
-export default function StacksPage() {
+/**
+ * The capability matrix, rendered once at the stack-coverage sub-route (design
+ * D10).
+ *
+ * The rubric index summarises these numbers through `stackCoverageSummary()`
+ * but never renders a stack row; this component owns the only table.
+ */
+export function StackCoverage() {
   const manifest = STACK_MANIFEST;
   const advisory = advisoryCoverage(manifest);
   const frameworks = frameworkSplit(manifest);
@@ -154,22 +154,7 @@ export default function StacksPage() {
   const census = censusDisclosure(manifest);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
-      <header>
-        <p className="text-xs tracking-wider text-faint uppercase">
-          Stack coverage
-        </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-          What the scanner sees
-        </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
-          Recognition, dependency parsing, offline evidence, and grading are
-          four different claims with four different sources. A stack can be
-          recognised without being parsed, and parsed without having advisory
-          data. This page keeps them apart.
-        </p>
-      </header>
-
+    <>
       <section className="mt-8" aria-labelledby="matrix-heading">
         <h2 id="matrix-heading" className="text-lg font-semibold">
           Recognised stacks
@@ -324,6 +309,6 @@ export default function StacksPage() {
           .
         </p>
       </section>
-    </div>
+    </>
   );
 }

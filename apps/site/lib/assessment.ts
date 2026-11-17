@@ -9,6 +9,9 @@
  */
 import { ASSESSMENT_BASE_URL, ASSESSMENT_CAMPAIGN, ASSESSMENT_VERDICT } from "@leapscore/contracts";
 
+/** The site route that serves the assessment document (design D8). */
+export const ASSESSMENT_ROUTE = "/assessment";
+
 /** The fallback destination's inbox, until a booking vendor is configured. */
 export const ASSESSMENT_EMAIL = "assessment@leapscore.dev";
 
